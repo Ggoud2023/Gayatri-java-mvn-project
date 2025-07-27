@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'Maven 3.8.7'  // Name must match what you set in Jenkins -> Global Tools
+        jdk 'JDK 17'         // Or the JDK version you installed
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/Ggoud2023/Gayatri-java-mvn-project.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'mvn clean install'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+
+        stage('Package') {
+            steps {
+                sh 'mvn package'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo '✅ Build completed successfully!'
+            archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+        }
+        failure {
+            echo '❌ Build failed.'
+        }
+    }
+}
